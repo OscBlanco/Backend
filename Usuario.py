@@ -1,9 +1,9 @@
-from flask_login import UserMixin
+#from flask_login import UserMixin
 from werkzeug.security import generate_password_hash,check_password_hash
 import sqlite3
 import datetime
 
-class Usuario(UserMixin):
+class Usuario():
     Base='base_datos'
     def __init__(self,ID,correo_elect,contrasena):
         self._ID=id(correo_elect)
@@ -23,7 +23,6 @@ class Usuario(UserMixin):
     @get_pass.setter
     def set_pass(self,contrasena):
         self._contrasena=generate_password_hash(contrasena) 
-    
     @staticmethod
     def get_bd():
         return sqlite3.connect(Usuario.Base)
@@ -32,19 +31,22 @@ class Usuario(UserMixin):
         return check_password_hash(self.get_pass,contrasena)
 
     def base_usuarios(self):
-        con=self.get_bd
+        con=self.get_bd()
         usuarios='''CREATE TABLE IF NOT EXISTS usuarios(
         ID INTEGER PRIMARY KEY,
         correo TEXT UNIQUE NOT NULL,
         contra TEXT NOT NULL,
-        fecha TEXT NOT NULL
+        fecha TEXT NOT NULL,
+        Admin BIT NOT NULL
         )'''
         con.cursor().execute(usuarios)
-    def set_usuario(self,ID,correo,nombre,contra):
-        con=self.get_bd
+        con.commit()
+    def set_usuario(self,ID,correo,contra,is_admin):
+        con=self.get_bd()
+        cursor=con.cursor()
         fecha=datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        usuario='''INSERT INTO usuarios(ID,correo,contra,fecha) VALUES (?,?,?,?) '''
-        con.cursor().execute(usuario,[ID,correo,contra,fecha])
+        usuario='''INSERT INTO usuarios(ID,correo,contra,fecha,Admin) VALUES (?,?,?,?,?) '''
+        cursor.execute(usuario,[ID,correo,contra,fecha,is_admin])
         con.commit()
     
     def actualizar_contrasena(self,contra):
@@ -56,10 +58,19 @@ class Usuario(UserMixin):
     @staticmethod
     def get_usuario(correo):
         con=Usuario.get_bd()
-        usuario='SELECT ID,correo,contra,fecha FROM usuarios WHERE correo= ?'
+        usuario='SELECT ID,correo,contra,fecha,Admin FROM usuarios WHERE correo= ?'
         con.cursor().execute(usuario,[correo])
         if con.cursor().fetchone() != None: 
             return con.cursor().fetchone()
         return None
         
-    
+user1=Usuario(id('oscar@correo.com'),'oscar@correo.com','123456')
+print(user1.verif_cont('123456'))
+#user1.base_usuarios()
+#user1.set_usuario(user1.get_ID,user1.get_correo,user1.get_pass,1)    
+#user2=Usuario(id('Jhan@correo.com'),'Jhan@correo.com','654321')
+#user2.set_usuario(user2.get_ID,user2.get_correo,user2.get_pass,1)
+#user3=Usuario(id('hola@correo.com'),'hola@correo.com','456789')
+#user4=Usuario(id('pepe@correo.com'),'pepe@correo.com','contraseña')
+#user3.set_usuario(user3.get_ID,user3.get_correo,user3.get_pass,0)
+#user4.set_usuario(user4.get_ID,user4.get_correo,user4.get_pass,0)

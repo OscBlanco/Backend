@@ -1,9 +1,10 @@
 
 
-from flask import Flask,render_template, jsonify,json,request
-from flask_login import LoginManager
+from flask import Flask,render_template, jsonify,json,request,redirect
+from flask_login import LoginManager,current_user,login_user
 from flask_cors import CORS,cross_origin
 from catalogo import Catalogo
+from Usuario import Usuario
 
 #app=Flask(__name__,static_folder='./frontend/dist/',template_folder='./frontend/dist/')
 app=Flask(__name__)
@@ -20,7 +21,22 @@ app.config['SECRET KEY']='3i-IdbODscH0yR4WFu_yvZppB76hh5I'
 #    return jsonify('Mensaje desde FLASK')
 login_manager=LoginManager(app)
 
-
+#@login_manager.user_loader
+#def cargar_usuario(correo_elect):
+#    ID=Usuario.get_usuario(correo_elect)
+#    if ID != None:
+#        return ID[0]
+#    return None
+@app.route('/login',methods=['GET','POST'])
+def login():
+    correo_ingresado=request.get()
+    usuario=Usuario.get_usuario(correo_ingresado)
+    if usuario is not None:
+        is_admin=usuario[4]
+        return is_admin
+    
+    return 'NO EXISTE EL USUARIO '
+    
 
 @app.route('/catalogo')
 def get_catalogo():
