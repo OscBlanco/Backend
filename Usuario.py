@@ -28,9 +28,13 @@ class Usuario():
     @staticmethod
     def get_bd():
         return sqlite3.connect(Usuario.Base)
-     
+    
     def verif_cont(self,contrasena):
-        return check_password_hash(self.get_pass,contrasena)
+        user=self.get_usuario(self.get_correo)
+        if user is not None:
+            contra=user[2]
+            return check_password_hash(contra,contrasena)
+        return None
     @staticmethod
     def base_usuarios():
         con=Usuario.get_bd()
@@ -68,8 +72,11 @@ class Usuario():
             return resultado
         return None
 
-#user1=Usuario('oscar@correo.com','123456')
-#user2=Usuario('julio@correo.com','654321')
+user1=Usuario('oscar@correo.com','123456')
+user2=Usuario('julio@correo.com','654321')
+cont=user2.verif_cont('654345h')
+print(cont)
+
 #Usuario.base_usuarios()
 #user1.set_usuario(user1.get_ID,user1.get_correo,user1.get_pass,1)
 #user2.set_usuario(user2.get_ID,user2.get_correo,user2.get_pass,0)

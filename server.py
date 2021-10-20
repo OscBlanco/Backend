@@ -26,8 +26,9 @@ def login():
         return redirect('/home')
     if request.method == 'POST':
         correo='correo'
-        usuario=Usuario.get_usuario(correo)
-        if usuario is not None and Usuario.verif_cont('pass'):
+        contrasena='contrasena'
+        usuario=Usuario(correo,contrasena)
+        if usuario is not None and usuario.verif_cont(contrasena):
             login_user(usuario)
             return redirect('/home')
     return render_template('login')
@@ -37,7 +38,12 @@ def register():
     if current_user.is_authenticated:
         return redirect('/home')
     if request.method == 'POST' :
-        correo=
+        correo='correo'
+        contrasena='contrasena'
+        if Usuario.get_usuario(correo) is not None:
+            return ('Este correo ya está registrado')
+        user=Usuario(correo,contrasena)
+        user.set_usuario(user.get_ID,user.get_correo,user.get_pass,0)
 @app.route('/catalogo')
 @login_required
 def get_catalogo():
