@@ -1,11 +1,13 @@
-#from flask_login import UserMixin
+#from flask_login import UserMixin,LoginManager
 from werkzeug.security import generate_password_hash,check_password_hash
 import sqlite3
 import datetime
 
+
+#login=LoginManager()
 class Usuario():
-    Base='base_datos'
-    def __init__(self,ID,correo_elect,contrasena):
+    Base='base_datos.sqlite'
+    def __init__(self,correo_elect,contrasena):
         self._ID=id(correo_elect)
         self._correo_elect=correo_elect
         self._contrasena=generate_password_hash(contrasena)
@@ -29,9 +31,9 @@ class Usuario():
      
     def verif_cont(self,contrasena):
         return check_password_hash(self.get_pass,contrasena)
-
-    def base_usuarios(self):
-        con=self.get_bd()
+    @staticmethod
+    def base_usuarios():
+        con=Usuario.get_bd()
         usuarios='''CREATE TABLE IF NOT EXISTS usuarios(
         ID INTEGER PRIMARY KEY,
         correo TEXT UNIQUE NOT NULL,
@@ -58,14 +60,24 @@ class Usuario():
     @staticmethod
     def get_usuario(correo):
         con=Usuario.get_bd()
-        usuario='SELECT ID,correo,contra,fecha,Admin FROM usuarios WHERE correo= ?'
-        con.cursor().execute(usuario,[correo])
-        if con.cursor().fetchone() != None: 
-            return con.cursor().fetchone()
+        cursor=con.cursor()
+        usuario='''SELECT ID,correo,contra,fecha,Admin FROM usuarios WHERE correo= ?'''
+        cursor.execute(usuario,[correo])
+        resultado=cursor.fetchone()
+        if resultado is not None: 
+            return resultado
         return None
-        
-user1=Usuario(id('oscar@correo.com'),'oscar@correo.com','123456')
-print(user1.verif_cont('123456'))
+
+#user1=Usuario('oscar@correo.com','123456')
+#user2=Usuario('julio@correo.com','654321')
+#Usuario.base_usuarios()
+#user1.set_usuario(user1.get_ID,user1.get_correo,user1.get_pass,1)
+#user2.set_usuario(user2.get_ID,user2.get_correo,user2.get_pass,0)
+#@login.user_loader
+#def load_user(correo):
+#    return Usuario.get_usuario(correo)            
+#user1=Usuario(id('oscar@correo.com'),'oscar@correo.com','123456')
+#print(user1.verif_cont('123456'))
 #user1.base_usuarios()
 #user1.set_usuario(user1.get_ID,user1.get_correo,user1.get_pass,1)    
 #user2=Usuario(id('Jhan@correo.com'),'Jhan@correo.com','654321')
