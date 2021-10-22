@@ -1,11 +1,11 @@
-#from flask_login import UserMixin,LoginManager
+from flask_login import UserMixin,LoginManager
 from werkzeug.security import generate_password_hash,check_password_hash
 import sqlite3
 import datetime
 
 
-#login=LoginManager()
-class Usuario():
+login=LoginManager()
+class Usuario(UserMixin):
     Base='base_datos.sqlite'
     def __init__(self,correo_elect,contrasena):
         self._ID=id(correo_elect)
@@ -24,7 +24,8 @@ class Usuario():
 
     @get_pass.setter
     def set_pass(self,contrasena):
-        self._contrasena=generate_password_hash(contrasena) 
+        self._contrasena=generate_password_hash(contrasena)
+        return self._contrasena
     @staticmethod
     def get_bd():
         return sqlite3.connect(Usuario.Base)
@@ -55,10 +56,18 @@ class Usuario():
         cursor.execute(usuario,[ID,correo,contra,fecha,is_admin])
         con.commit()
     
-    def actualizar_contrasena(self,contra):
+    def actualizar_contrasena(self,contrasena):
         con=self.get_bd
+        contra=self.set_pass(contrasena)
         sentencia='UPDATE usuarios SET contra = ? WHERE ID = ?'
         con.cursor().execute(sentencia,[contra])
+        con.commit()
+    @staticmethod
+    def borrar_usuario(correo):
+        con=Usuario.get_bd()
+        cursor=con.cursor()
+        borrar='DELETE FROM usuario WHERE correo= ?'
+        cursor.execute(borrar,[correo])
         con.commit()
     
     @staticmethod
@@ -72,24 +81,6 @@ class Usuario():
             return resultado
         return None
 
-user1=Usuario('oscar@correo.com','123456')
-user2=Usuario('julio@correo.com','654321')
-cont=user2.verif_cont('654345h')
-print(cont)
-
-#Usuario.base_usuarios()
-#user1.set_usuario(user1.get_ID,user1.get_correo,user1.get_pass,1)
-#user2.set_usuario(user2.get_ID,user2.get_correo,user2.get_pass,0)
-#@login.user_loader
-#def load_user(correo):
-#    return Usuario.get_usuario(correo)            
-#user1=Usuario(id('oscar@correo.com'),'oscar@correo.com','123456')
-#print(user1.verif_cont('123456'))
-#user1.base_usuarios()
-#user1.set_usuario(user1.get_ID,user1.get_correo,user1.get_pass,1)    
-#user2=Usuario(id('Jhan@correo.com'),'Jhan@correo.com','654321')
-#user2.set_usuario(user2.get_ID,user2.get_correo,user2.get_pass,1)
-#user3=Usuario(id('hola@correo.com'),'hola@correo.com','456789')
-#user4=Usuario(id('pepe@correo.com'),'pepe@correo.com','contraseña')
-#user3.set_usuario(user3.get_ID,user3.get_correo,user3.get_pass,0)
-#user4.set_usuario(user4.get_ID,user4.get_correo,user4.get_pass,0)
+@login.user_loader
+def load_user(correo):
+    return Usuario.get_usuario(correo)            

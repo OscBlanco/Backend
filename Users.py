@@ -1,27 +1,36 @@
 from Usuario import Usuario
-#from flask_login import UserMixin
-from werkzeug.security import check_password_hash
-import sqlite3
 from catalogo import Catalogo
+from Orden import Orden
 
-
-class Administrador(Usuario,Catalogo):
-    def __init__(self,ID,correo_elect,nombre_usuario,contrasena):
-        Usuario.__init__(self,ID,correo_elect,nombre_usuario,contrasena)
+class Admin(Usuario,Catalogo):
+    def __init__(self,correo_elect,contrasena):
+        Usuario.__init__(self,correo_elect,contrasena)
+        self._is_admin=1
+    @property
+    def get_adm(self):
+        return self._is_admin
+class SuperAdm(Admin):
+    def __init__(self,correo_elect,contrasena):
+        Usuario.__init__(self,correo_elect,contrasena)
+        self._is_admin=1
     
-    def verif_cont(self,contrasena):
-        return check_password_hash(self.get_pass,contrasena)
-    
+    def set_admin(self,usuario):
+        ID=usuario.get_ID
+        correo=usuario.get_correo
+        contra=usuario.get_pass
+        admin=Admin(correo,contra)
+        Usuario.borrar_usuario(correo)
+        admin.set_usuario(ID,correo,contra,admin.get_adm)
+        del usuario
+        
         
     
-    
-
-class SuperAdm(Administrador):
-    def __init__(self,correo_elect,nombre_usuario,contrasena,id_adm):
-        super().__init__(correo_elect,nombre_usuario,contrasena,id_adm)
-        
 class UsuarioFinal(Usuario):
-    pass
-
-admin1=Administrador(2,'holas@correo','ivan','a12345')
-set_usuario(admin1.get_ID,admin1.get_correo,admin1.get_nombre,admin1.get_pass)
+    def __init__(self,correo_elect,contrasena):    
+        super().__init__(self,correo_elect,contrasena)
+        self._is_admin=0
+        
+    def compra(self,*productos):
+        orden=Orden(*productos)
+        fecha=orden.fecha_creac
+        

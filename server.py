@@ -5,6 +5,7 @@ from flask_login import LoginManager,current_user,login_user,login_required
 from flask_cors import CORS,cross_origin
 from catalogo import Catalogo
 from Usuario import Usuario,login
+from Users import *
 
 #app=Flask(__name__,static_folder='./frontend/dist/',template_folder='./frontend/dist/')
 app=Flask(__name__)
@@ -29,6 +30,10 @@ def login():
         contrasena='contrasena'
         usuario=Usuario(correo,contrasena)
         if usuario is not None and usuario.verif_cont(contrasena):
+            admin=usuario.get_usuario(correo)
+            if admin[4]==1:
+                login_user(usuario)
+                return redirect('/home_Admin')
             login_user(usuario)
             return redirect('/home')
     return render_template('login')

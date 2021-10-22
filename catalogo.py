@@ -33,7 +33,7 @@ class Catalogo():
     def actualizar_producto(self,ID,nombre,precio,calificacion):
         bd=self.get_bd()
         cursor=bd.cursor()
-        sentencia='UPDATE catalogo SET nombre=?,precio = ?,calificacion WHERE id = ?'
+        sentencia='UPDATE catalogo SET nombre=?,precio = ?,calificacion =? WHERE ID = ?'
         cursor.execute(sentencia,[nombre,precio,calificacion,ID])
         bd.commit()
         return True
