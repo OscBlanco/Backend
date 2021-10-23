@@ -7,16 +7,16 @@ from catalogo import Catalogo
 from Usuario import Usuario,login
 from Users import *
 
-#app=Flask(__name__,static_folder='./frontend/dist/',template_folder='./frontend/dist/')
-app=Flask(__name__)
+app=Flask(__name__,static_folder='./frontend/dist/',template_folder='./frontend/dist/')
+#app=Flask(__name__)
 #CORS(app, resources={r'*':{'origins': '*'}},CORS_SUPPORTS_CREDENTIALS=True)
 app.config['SECRET KEY']='3i-IdbODscH0yR4WFu_yvZppB76hh5I'
-#@app.route('/',defaults={'path':''})
-#@app.route('/<path:path>')
-#def render_vue(path):
-#    return render_template('index.html')
-#
-#
+@app.route('/',defaults={'path':''})
+@app.route('/<path:path>')
+def render_vue(path):
+    return render_template('index.html')
+
+
 
 login.init_app(app)
 login.login_view='home'
