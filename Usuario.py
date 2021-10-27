@@ -8,12 +8,12 @@ login=LoginManager()
 class Usuario(UserMixin):
     Base='base_datos.sqlite'
     def __init__(self,correo_elect,contrasena):
-        self._ID=id(correo_elect)
+        self.id=id(correo_elect)
         self._correo_elect=correo_elect
         self._contrasena=generate_password_hash(contrasena)
     @property
     def get_ID(self):
-        return self._ID    
+        return self.id    
     @property
     def get_correo(self):
         return self._correo_elect

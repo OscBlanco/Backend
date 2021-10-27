@@ -30,7 +30,11 @@ class UsuarioFinal(Usuario):
         super().__init__(self,correo_elect,contrasena)
         self._is_admin=0
         
-    def compra(self,*productos):
-        orden=Orden(*productos)
-        fecha=orden.fecha_creac
+    def compra(self,**productos):
+        orden=Orden(self,**productos)
+        orden.add_orden(self)
+    
+    
+        
+        
         

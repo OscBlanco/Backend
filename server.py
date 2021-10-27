@@ -10,7 +10,7 @@ from Users import *
 app=Flask(__name__,static_folder='./frontend/dist/',template_folder='./frontend/dist/')
 #app=Flask(__name__)
 #CORS(app, resources={r'*':{'origins': '*'}},CORS_SUPPORTS_CREDENTIALS=True)
-app.config['SECRET KEY']='3i-IdbODscH0yR4WFu_yvZppB76hh5I'
+app.config['SECRET_KEY']='3i-IdbODscH0yR4WFu_yvZppB76hh5I'
 @app.route('/',defaults={'path':''})
 @app.route('/<path:path>')
 def render_vue(path):

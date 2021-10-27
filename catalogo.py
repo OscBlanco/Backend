@@ -1,7 +1,7 @@
 import sqlite3
 
 class Catalogo():
-    Base_catalogo='base_datos'
+    Base_catalogo='base_datos.sqlite'
 #    def __init__(self):
 #        self.bd=self.Base_catalogo
     def get_bd(self):
