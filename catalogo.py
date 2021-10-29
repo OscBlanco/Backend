@@ -51,6 +51,13 @@ class Catalogo():
         sentencia = "SELECT ID, nombre, precio, calificacion FROM catalogo WHERE ID = ?"
         cursor.execute(sentencia, [ID])
         return cursor.fetchone()
+    def get_by_name(self,nombre):
+        bd = self.get_bd()
+        cursor = bd.cursor()
+        sentencia = "SELECT ID, nombre, precio, calificacion FROM catalogo WHERE nombre = ?"
+        cursor.execute(sentencia, [nombre])
+        return cursor.fetchone()
+        
     
     def get_catalogo(self):
         bd=self.get_bd()

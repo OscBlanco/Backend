@@ -1,6 +1,6 @@
 
 
-from flask import Flask,render_template, jsonify,json,request,redirect
+from flask import Flask,render_template, jsonify,json,request,redirect,g
 from flask_login import LoginManager,current_user,login_user,login_required
 from flask_cors import CORS,cross_origin
 from catalogo import Catalogo
@@ -86,5 +86,26 @@ def borrar_producto(ID):
 def get_por_id(ID):
     resultado=Catalogo().get_por_id(ID)
     return jsonify(resultado)
+
+@app.route('comentar',methods=['GET,POST','DELETE'])
+@login_required
+def comentar():
+    comentario=request.get()
+    nombre_producto=request.get()
+    g.user=current_user.get_id()
+    if request.method=='POST':
+        Usuario.comentar(comentario,g.user,nombre_producto)
+    elif request.method=='DELETE':
+        Usuario.borrar_comentario(comentario)
+@app.route('comentar/<comentario>',methods=['GET,POST'])
+@login_required
+def editar(comentario):
+    comentario_nuevo=request-get()
+    Usuario.editar_comentario(comentario,comentario_nuevo)
+    
+
+    
+    
+        
 
     
